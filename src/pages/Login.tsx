@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import GlassContainer from "../components/Global/GlassContainer";
+import { filter } from "framer-motion/m";
 
 const openDiscordURI = async () => {
   window.open(
@@ -43,8 +44,8 @@ const Login: React.FC = () => {
 
         <motion.h1
           className="text-5xl font-bold text-white tracking-wide text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, filter: "blur(15px)", y: 10 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ delay: 0.4, duration: 0.7 }}
         >
           Welcome to Stellar
