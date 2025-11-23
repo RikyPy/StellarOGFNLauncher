@@ -4,17 +4,11 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import GlassContainer from "../components/Global/GlassContainer";
-import { filter } from "framer-motion/m";
-
-const openDiscordURI = async () => {
-  window.open(
-    "https://prod-api-v1.stellarfn.dev/stellar/external/discord",
-    "_blank"
-  );
-};
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(true);
+  const nav = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,7 +79,7 @@ const Login: React.FC = () => {
           </div>
 
           <button
-            onClick={async () => await openDiscordURI()}
+            onClick={async () => await nav("/home")}
             className="w-full py-4 px-6 rounded-xl bg-indigo-500/80 hover:bg-indigo-500 text-white font-semibold transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 border border-indigo-300/20"
           >
             <span>Continue</span>
