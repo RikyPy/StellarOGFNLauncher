@@ -28,7 +28,7 @@ const App = () => {
       </svg>
 
       <Frame />
-      <Particles quantity={70} />
+      <Particles quantity={85} />
       {location.pathname !== "/" && <Sidebar />}
 
       <Routes>
