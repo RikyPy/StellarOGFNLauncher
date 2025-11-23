@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Header from "../components/Home/Header";
 
 const Home: React.FC = () => {
   return (
@@ -11,7 +12,9 @@ const Home: React.FC = () => {
         duration: 0.3,
       }}
       className="w-[calc(100vw-64px)] ml-16 h-screen flex flex-col px-7 pt-7 justify-start items-start"
-    ></motion.div>
+    >
+      <Header />
+    </motion.div>
   );
 };
 

@@ -53,7 +53,7 @@ const Login: React.FC = () => {
         className="relative z-10 w-full max-w-md mx-4"
         style={{ pointerEvents: showWelcome ? "none" : "auto" }}
       >
-        <GlassContainer className="p-6 flex flex-col items-center bg-glass-noise">
+        <GlassContainer className="p-6 flex flex-col items-center bg-glass-noise rounded-lg">
           <motion.img
             src="/StellarStar.png"
             alt="Stellar"
