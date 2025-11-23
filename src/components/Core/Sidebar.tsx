@@ -162,7 +162,10 @@ const Sidebar: React.FC = () => {
 
                   <div className="p-1.5 flex flex-col gap-1.5">
                     <button
-                      onClick={() => navigate("/settings")}
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate("/settings");
+                      }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-2 text-white/80 hover:bg-white/10 rounded-md transition-all duration-200 group"
                     >
                       <TbSettings className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
@@ -170,7 +173,10 @@ const Sidebar: React.FC = () => {
                     </button>
 
                     <button
-                      onClick={() => navigate("/")}
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate("/");
+                      }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-2 text-red-400 hover:bg-red-500/10 rounded-md transition-all duration-200 group"
                     >
                       <TbLogout className="w-3.5 h-3.5 text-red-400 group-hover:text-red-300 transition-colors" />
