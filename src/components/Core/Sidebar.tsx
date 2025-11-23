@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
   const baseButton =
     "flex justify-center items-center w-10 h-10 rounded-md transition-all duration-300 cursor-pointer group";
   const activeButton =
-    "bg-white/10 border border-white/10 shadow-lg shadow-white/5";
+    "shadow-glass-shine border border-white/10 shadow-lg shadow-white/5";
   const hoverButton =
     "hover:bg-white/5 border border-transparent hover:border-white/10";
   const iconClass =

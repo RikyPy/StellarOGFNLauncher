@@ -53,7 +53,7 @@ const Login: React.FC = () => {
         className="relative z-10 w-full max-w-md mx-4"
         style={{ pointerEvents: showWelcome ? "none" : "auto" }}
       >
-        <GlassContainer className="p-12 flex flex-col items-center">
+        <GlassContainer className="p-6 flex flex-col items-center bg-glass-noise">
           <motion.img
             src="/StellarStar.png"
             alt="Stellar"
@@ -80,10 +80,13 @@ const Login: React.FC = () => {
 
           <button
             onClick={async () => await nav("/home")}
-            className="w-full py-4 px-6 rounded-xl bg-indigo-500/80 hover:bg-indigo-500 text-white font-semibold transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 border border-indigo-300/20"
+            className="group/button bg-glass-noise relative min-w-[375px] inline-flex items-center overflow-hidden rounded-md bg-blue-800/30 backdrop-blur-lg px-12 py-3 justify-center gap-2 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl hover:shadow-gray-600/10 border border-white/20"
           >
             <span>Continue</span>
             <ArrowRight className="h-5 w-5" />
+            <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
+              <div className="relative h-full w-10 bg-white/20"></div>
+            </div>
           </button>
         </GlassContainer>
       </motion.div>
