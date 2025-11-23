@@ -48,7 +48,7 @@ const Sidebar: React.FC = () => {
         fixed top-0 left-0 w-16 h-screen
         bg-gray-500/5 bg-glass-noise bg-clip-padding backdrop-filter backdrop-blur-lg
         backdrop-saturate-100 backdrop-contrast-100
-        shadow-xl flex flex-col justify-between items-center px-3 py-4
+        shadow-xl flex flex-col justify-between items-center px-3 py-4 z-50
       "
     >
       <div className="flex flex-col gap-3.5">
@@ -99,7 +99,7 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
 
-      <div className="relative" ref={profileRef}>
+      <div className="relative z-[50]" ref={profileRef}>
         <button
           onClick={() => setShowProfileMenu((prev) => !prev)}
           className={`${baseButton} ${hoverButton} overflow-visible relative`}
@@ -120,7 +120,7 @@ const Sidebar: React.FC = () => {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute bottom-3 left-[3.25rem] z-50"
+                className="absolute bottom-3 left-[3.25rem]  "
               >
                 <div
                   className={`
@@ -141,7 +141,7 @@ const Sidebar: React.FC = () => {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute left-14 bottom-0 z-50"
+                className="absolute left-14 bottom-0"
               >
                 <GlassContainer className="w-44 rounded-md bg-glass-noise overflow-hidden">
                   <div className="p-2.5 px-3 border-b border-white/10">
