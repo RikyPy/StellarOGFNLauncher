@@ -1,0 +1,101 @@
+import React, { useEffect, useState } from "react";
+import GlassContainer from "../Global/GlassContainer";
+import { Github } from "lucide-react";
+import { openUrl } from "@tauri-apps/plugin-opener";
+
+interface Commit {
+  sha: string;
+  commit: {
+    message: string;
+    author: {
+      name: string;
+      date: string;
+    };
+  };
+}
+
+const GithubChangelogs: React.FC<{
+  token: string;
+  className?: string;
+  onClick?: () => void;
+}> = ({ token, className = "", onClick }) => {
+  const [commits, setCommits] = useState<Commit[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("https://prod-api-v1.stellarfn.dev/stellar/launcher/v1/github", {
+      headers: {
+        Accept: "application/vnd.github+json",
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch commits");
+        const data = await res.json();
+        setCommits(data);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  if (loading)
+    return (
+      <GlassContainer
+        className={`p-6 text-white flex items-center justify-center rounded-lg space-y-4 max-h-[200px] w-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent ${className} bg-glass-noise`}
+        onClick={onClick}
+      >
+        Loading commits...
+      </GlassContainer>
+    );
+
+  if (error)
+    return (
+      <GlassContainer
+        className={`p-6 rounded-lg text-white space-y-4 max-h-[200px] flex items-center justify-center w-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent ${className} bg-glass-noise`}
+        onClick={onClick}
+      >
+        Failed to load: {error}
+      </GlassContainer>
+    );
+
+  return (
+    <GlassContainer
+      className={`p-6 rounded-lg space-y-4 max-h-[200px] w-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent ${className} bg-glass-noise`}
+      onClick={onClick}
+      style={{ minWidth: 300 }}
+    >
+      <h2 className="flex flex-row gap-2 items-center justify-start text-white">
+        <Github /> Launcher Updates
+      </h2>
+      <div className="grid grid-cols-2 gap-2">
+        {commits.map(({ sha, commit }) => (
+          <div
+            key={sha}
+            className="p-4 rounded-md bg-white/10 hover:bg-white/20 transition-colors select-none"
+            title={commit.message}
+          >
+            <p className="text-xs text-gray-300 mb-1">
+              {new Date(commit.author.date).toLocaleString()}
+            </p>
+            <h4 className="text-white font-semibold mt-1 line-clamp-2">
+              {commit.message}
+            </h4>
+            <p className="text-xs text-gray-400 mt-1">
+              by{" "}
+              <a
+                onClick={() => {
+                  openUrl(`https://github.com/${commit.author.name}`);
+                }}
+                className="text-gray-400 hover:text-white transition-all duration-200 cursor-pointer"
+              >
+                {commit.author.name}
+              </a>
+            </p>
+          </div>
+        ))}
+      </div>
+    </GlassContainer>
+  );
+};
+
+export default GithubChangelogs;

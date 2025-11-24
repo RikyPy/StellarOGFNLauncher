@@ -6,7 +6,7 @@ const Frame: React.FC = () => {
   return (
     <div
       data-tauri-drag-region
-      className="fixed w-screen h-6 top-0 left-0 flex justify-end items-center z-50"
+      className="fixed w-screen h-9 top-0 left-0 flex justify-end items-center z-50"
     >
       <div className="flex items-center ml-3 mt-1"></div>
       <div className="flex text-white h-full">
@@ -19,7 +19,7 @@ const Frame: React.FC = () => {
 
         <button
           onClick={() => Window.getCurrent().close()}
-          className="cursor-pointer w-10 h-7 flex justify-center items-center hover:bg-red-500/50 transition-all rounded-sm hover:backdrop-blur-2xl duration-220"
+          className="cursor-pointer w-10 h-full flex justify-center items-center hover:bg-red-500/50 transition-all rounded-sm hover:backdrop-blur-2xl duration-220"
         >
           <HiX />
         </button>

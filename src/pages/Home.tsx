@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Banner from "../components/Home/Banner";
 import Stats from "../components/Home/Stats";
+import GithubChangelogs from "../components/Home/GithubChangelogs";
 
 const getGreeting = (): string => {
   const hour = new Date().getHours();
@@ -36,7 +37,8 @@ const Home: React.FC = () => {
           <p className="text-white font-normal text-sm">0 Players Online</p>
         </div>
         <Banner />
-        <div className="w-full flex justify-end">
+        <div className="w-full flex gap-2 justify-end">
+          <GithubChangelogs />
           <Stats />
         </div>
       </div>
