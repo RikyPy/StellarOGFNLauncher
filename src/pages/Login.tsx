@@ -22,7 +22,20 @@ const Login: React.FC = () => {
       AuthStore.init();
     })();
 
-    const timer = setTimeout(() => setShowWelcome(false), 2400);
+    const status = async (): Promise<Boolean> => {
+      if (AuthStore.jwt) {
+        return await AuthStore.login(AuthStore.jwt);
+      }
+
+      return false;
+    };
+
+    const timer = setTimeout(async () => {
+      if (await status()) {
+        nav("/home");
+      }
+      setShowWelcome(false);
+    }, 2400);
     return () => clearTimeout(timer);
   }, []);
 

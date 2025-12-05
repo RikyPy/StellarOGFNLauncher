@@ -20,7 +20,6 @@ const getGreeting = (): string => {
 const Home: React.FC = () => {
   const greeting = getGreeting();
   const AuthStore = useAuthStore();
-  console.log(AuthStore.account);
 
   return (
     <motion.div

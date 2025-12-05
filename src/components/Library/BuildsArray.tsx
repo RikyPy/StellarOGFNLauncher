@@ -2,12 +2,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import BuildStore from "@/zustand/BuildStore";
 import BuildCard from "./BuildCard";
+import { handlePlay } from "@/utils/library/handlePlay";
 
 const BuildsArray: React.FC = () => {
   const { builds, remove } = BuildStore();
   const buildsArray = Array.from(builds.entries());
 
-  const handlePlay = (path: string) => console.log("Playing:", path);
   const handleDelete = (path: string) => remove(path);
 
   if (buildsArray.length === 0) {
@@ -39,7 +39,7 @@ const BuildsArray: React.FC = () => {
             path={path}
             build={build}
             onDelete={handleDelete}
-            onPlay={handlePlay}
+            onPlay={() => handlePlay(path)}
           />
         ))}
       </div>

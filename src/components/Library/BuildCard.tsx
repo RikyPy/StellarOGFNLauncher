@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { IoPlay } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
-import BuildStore, { IBuild } from "@/zustand/BuildStore";
+import { IBuild } from "@/zustand/BuildStore";
 import GlassContainer from "../Global/GlassContainer";
 
 const BuildCard: React.FC<{
@@ -25,7 +24,7 @@ const BuildCard: React.FC<{
         <img
           src={build.splash}
           alt={`Fortnite ${build.version}`}
-          className="absolute w-full h-full object-cover transition-all ease-in-out duration-500 group-hover:scale-110"
+          className="absolute w-full h-full object-cover transition-all ease-in-out duration-500 group-hover:scale-105"
           onLoad={() => setIsLoaded(true)}
           onError={() => setIsLoaded(true)}
           loading="lazy"
@@ -46,15 +45,15 @@ const BuildCard: React.FC<{
         <div className="absolute right-2 bottom-2 flex flex-col gap-1 items-center">
           <button
             onClick={() => onPlay(path)}
-            className="flex items-center justify-center text-white/55 p-1 rounded-sm border border-white/25 hover:text-white/80 translate-x-8 group-hover:translate-x-0 hover:border-white/50 transition duration-200 bg-gray-500/5 backdrop-blur-sm shadow-sm"
+            className="flex items-center justify-center text-white/55 p-2 rounded-md border border-white/25 hover:text-white/80 translate-x-10 group-hover:translate-x-0 hover:border-white/50 transition duration-200 bg-gray-500/5 backdrop-blur-sm shadow-sm"
           >
-            <IoPlay className="w-2.5 h-2.5" />
+            <IoPlay className="w-3 h-3" />
           </button>
           <button
             onClick={() => onDelete(path)}
-            className="flex items-center justify-center text-white/55 p-1 rounded-sm border border-white/25 hover:text-white/80 translate-x-8 group-hover:translate-x-0 hover:border-white/50 transition duration-200 bg-gray-500/5 backdrop-blur-sm shadow-sm"
+            className="flex items-center justify-center text-white/55 p-2 rounded-md border border-white/25 hover:text-white/80 translate-x-10 group-hover:translate-x-0 hover:border-white/50 transition duration-200 bg-gray-500/5 backdrop-blur-sm shadow-sm"
           >
-            <MdDeleteForever className="w-2.5 h-2.5" />
+            <MdDeleteForever className="w-3 h-3" />
           </button>
         </div>
       </div>

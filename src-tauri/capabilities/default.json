@@ -28,6 +28,7 @@
       ]
     },
     "deep-link:default",
-    "log:default"
+    "log:default",
+    "notification:default"
   ]
 }
