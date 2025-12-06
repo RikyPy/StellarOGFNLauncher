@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import BuildStore from "@/zustand/BuildStore";
 import BuildCard from "./BuildCard";
 import { handlePlay } from "@/utils/library/handlePlay";
+import { handleClose } from "@/utils/library/handleClose";
 
 const BuildsArray: React.FC = () => {
   const { builds, remove } = BuildStore();
@@ -40,6 +41,7 @@ const BuildsArray: React.FC = () => {
             build={build}
             onDelete={handleDelete}
             onPlay={() => handlePlay(path)}
+            onClose={() => handleClose(path)}
           />
         ))}
       </div>
