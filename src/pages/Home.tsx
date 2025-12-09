@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Banner from "../components/Home/Banner";
 import Stats from "../components/Home/Stats";
 import GithubChangelogs from "../components/Home/GithubChangelogs";
 import { useAuthStore } from "@/zustand/AuthStore";
+import { useRoutingStore } from "@/zustand/RoutingStore";
+import { Stellar } from "@/stellar";
 
 const getGreeting = (): string => {
   const hour = new Date().getHours();
@@ -20,6 +22,31 @@ const getGreeting = (): string => {
 const Home: React.FC = () => {
   const greeting = getGreeting();
   const AuthStore = useAuthStore();
+  const Routing = useRoutingStore();
+
+  const [onlineCount, setOnlineCount] = useState<number>(0);
+  const [loadingOnline, setLoadingOnline] = useState(true);
+
+  useEffect(() => {
+    const fetchOnline = async () => {
+      setLoadingOnline(true);
+      try {
+        const res = await Stellar.Requests.get<{ count: number }>(
+          `${Routing.Routes.get("public")?.url}/online`
+        );
+
+        if (res.ok && res.data) setOnlineCount(res.data.count);
+      } catch (err) {
+        console.error("failed to fetch online players:", err);
+      } finally {
+        setLoadingOnline(false);
+      }
+    };
+
+    fetchOnline();
+    const interval = setInterval(fetchOnline, 10000);
+    return () => clearInterval(interval);
+  }, [Routing]);
 
   return (
     <motion.div
@@ -39,7 +66,11 @@ const Home: React.FC = () => {
               {AuthStore.account?.DisplayName}!
             </p>
           </h2>
-          <p className="text-white font-normal text-sm">0 Players Online</p>
+          <p className="text-white font-normal text-sm">
+            {loadingOnline
+              ? "Loading players..."
+              : `${onlineCount} Player${onlineCount === 1 ? "" : "s"} Online`}
+          </p>
         </div>
         <Banner />
         <div className="w-full flex gap-2 justify-end">

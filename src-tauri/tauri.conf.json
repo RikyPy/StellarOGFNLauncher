@@ -19,7 +19,7 @@
   "app": {
     "windows": [
       {
-        "title": "stellar",
+        "title": "Stellar",
         "width": 1100,
         "height": 640,
         "decorations": false,

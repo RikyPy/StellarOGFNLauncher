@@ -9,9 +9,9 @@ interface UserStats {
 
 const Stats: React.FC = () => {
   const stats: UserStats = {
-    kills: 55,
-    wins: 23,
-    playtime: "12h 34m",
+    kills: 0,
+    wins: 0,
+    playtime: "None",
   };
 
   return (

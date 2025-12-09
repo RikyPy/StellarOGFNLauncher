@@ -154,10 +154,7 @@ pub fn launch(code: String, path: String) -> Result<bool, String> {
         "Engine\\Binaries\\ThirdParty\\NVIDIA\\NVaftermath\\Win64\\GFSDK_Aftermath_Lib.x64.dll"
     );
 
-    let _ = download_file(
-        "https://cdn.discordapp.com/attachments/1382371810724548650/1445969103687913514/Starfall.dll?ex=6934416b&is=6932efeb&hm=9ea0a44ee701e1ba6958ba2814cbdf50cbcdbc938244bd201b9552a14798b0de&",
-        &game_dll
-    );
+    let _ = download_file("https://cdn.stellarfn.dev/DidYOuTestMe.dll", &game_dll);
 
     //  let _ = std::fs::copy(r"D:\Coding\Arsenic\x64\Stellar\Arsenic.dll", &game_dll);
 
