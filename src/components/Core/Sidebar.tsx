@@ -184,6 +184,7 @@ const Sidebar: React.FC = () => {
 
                       <button
                         onClick={() => {
+                          AuthStore.logout();
                           setShowProfileMenu(false);
                           navigate("/");
                         }}

@@ -7,6 +7,7 @@ import GlassContainer from "@/components/Global/GlassContainer";
 import { Option } from "../Option";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { Stellar } from "@/stellar";
 
 const INVENTORY_ITEMS = [
   {
@@ -32,8 +33,12 @@ const INVENTORY_ITEMS = [
 ];
 
 export const GameOptionsPage = () => {
-  const [preEditsDisabled, setPreEditsDisabled] = useState(false);
-  const [resetOnRelease, setResetOnRelease] = useState(false);
+  const [preEditsDisabled, setPreEditsDisabled] = useState(
+    Stellar.Storage.get("game.disablePreEdits") || false
+  );
+  const [resetOnRelease, setResetOnRelease] = useState(
+    Stellar.Storage.get("game.resetOnRelease") || false
+  );
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [loadout, setLoadout] = useState<Array<string | null>>([
     null,
@@ -91,12 +96,18 @@ export const GameOptionsPage = () => {
           <Option
             label="Disable Pre-Edits"
             value={preEditsDisabled}
-            onChange={setPreEditsDisabled}
+            onChange={async () => {
+              Stellar.Storage.set("game.disablePreEdits", !preEditsDisabled);
+              setPreEditsDisabled(!preEditsDisabled);
+            }}
           />
           <Option
             label="Reset On Release"
             value={resetOnRelease}
-            onChange={setResetOnRelease}
+            onChange={async () => {
+              Stellar.Storage.set("game.resetOnRelease", !resetOnRelease);
+              setResetOnRelease(!resetOnRelease);
+            }}
           />
         </GlassContainer>
       </div>

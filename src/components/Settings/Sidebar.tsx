@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Wrench, Settings, Gamepad } from "lucide-react";
 import GlassContainer from "../Global/GlassContainer";
+import { useAuthStore } from "@/zustand/AuthStore";
 
 export const SettingsTopBar: React.FC<{
   onSelect: (key: string) => void;
   active?: string;
 }> = ({ onSelect, active }) => {
+  const AuthStore = useAuthStore();
   const sections = [
     { name: "Game Options", icon: <Gamepad size={15} /> },
     // { name: "Options", icon: <Settings size={15} /> },
-    { name: "Developer", icon: <Wrench size={15} /> },
   ];
+
+  useEffect(() => {
+    if (AuthStore.account?.Roles.includes("Developer")) {
+      sections.push({ name: "Developer", icon: <Wrench size={15} /> });
+    }
+  }, []);
 
   // lets not do mt-2 later on
   return (
