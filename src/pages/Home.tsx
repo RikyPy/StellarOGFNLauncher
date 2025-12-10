@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Banner from "../components/Home/Banner";
-import Stats from "../components/Home/Stats";
+import Donate from "../components/Home/Donate";
 import GithubChangelogs from "../components/Home/GithubChangelogs";
 import { useAuthStore } from "@/zustand/AuthStore";
 import { useRoutingStore } from "@/zustand/RoutingStore";
@@ -75,7 +75,7 @@ const Home: React.FC = () => {
         <Banner />
         <div className="w-full flex gap-2 justify-end">
           <GithubChangelogs />
-          <Stats />
+          <Donate />
         </div>
       </div>
     </motion.div>
