@@ -4,6 +4,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBannerStore } from "../../zustand/BannerStore";
 import GlassContainer from "../Global/GlassContainer";
+import { useNavigate } from "react-router-dom";
 
 // for glow i used a script with library node-vibrant/node
 const LaunchPosts = [
@@ -27,6 +28,7 @@ const LaunchPosts = [
 const Banner: React.FC = () => {
   const { PostIndex, incrementPostIndex } = useBannerStore();
   const current = LaunchPosts[PostIndex];
+  const nav = useNavigate();
 
   return (
     <GlassContainer
@@ -82,7 +84,10 @@ const Banner: React.FC = () => {
           </motion.p>
 
           <div className="flex items-center justify-between pt-2">
-            <button className="px-6 py-2 bg-white/10 cursor-pointer hover:bg-white/20 border border-white/20 text-white rounded-md font-semibold text-sm transition-all flex items-center gap-2 backdrop-blur-sm hover:scale-105 active:scale-95">
+            <button
+              onClick={() => nav("/library")}
+              className="px-6 py-2 bg-white/10 cursor-pointer hover:bg-white/20 border border-white/20 text-white rounded-md font-semibold text-sm transition-all flex items-center gap-2 backdrop-blur-sm hover:scale-105 active:scale-95"
+            >
               Play Now
             </button>
             <div className="flex items-center gap-2">

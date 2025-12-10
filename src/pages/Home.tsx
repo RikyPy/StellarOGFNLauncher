@@ -68,7 +68,7 @@ const Home: React.FC = () => {
           </h2>
           <p className="text-white font-normal text-sm">
             {loadingOnline
-              ? "Loading players..."
+              ? "1 Player Online"
               : `${onlineCount} Player${onlineCount === 1 ? "" : "s"} Online`}
           </p>
         </div>
