@@ -15,6 +15,7 @@ interface BuildStore {
   remove: (path: string) => void;
   clear: () => void;
 }
+const normalizePath = (p: string) => p.replace(/\\/g, "/").toLowerCase();
 
 const BuildStore = create<BuildStore>((set, get) => ({
   builds:
@@ -27,7 +28,8 @@ const BuildStore = create<BuildStore>((set, get) => ({
   add: (path, build) => {
     if (typeof window === "undefined") return;
     const builds = get().builds;
-    builds.set(path, build);
+    const key = normalizePath(path);
+    builds.set(key, build);
     localStorage.setItem("builds", JSON.stringify(Object.fromEntries(builds)));
     set({ builds: new Map(builds) });
   },
@@ -35,7 +37,8 @@ const BuildStore = create<BuildStore>((set, get) => ({
   remove: (path) => {
     if (typeof window === "undefined") return;
     const builds = get().builds;
-    builds.delete(path);
+    const key = normalizePath(path);
+    builds.delete(key);
     localStorage.setItem("builds", JSON.stringify(Object.fromEntries(builds)));
     set({ builds: new Map(builds) });
   },

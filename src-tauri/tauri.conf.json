@@ -22,9 +22,11 @@
         "title": "Stellar",
         "width": 1100,
         "height": 640,
+        "minHeight": 640,
+        "minWidth": 1100,
         "decorations": false,
         "fullscreen": false,
-        "resizable": false,
+        "resizable": true,
         "center": true,
         "transparent": true
       }
