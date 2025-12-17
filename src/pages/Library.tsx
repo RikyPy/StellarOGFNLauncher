@@ -1,14 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import BuildsGrid from "@/components/Library/BuildsArray";
 import ImportBuildModal from "@/components/Library/ImportBuildModal";
+import RequiredFilesDownloader from "@/components/Library/RequiredFilesDownloader";
 import { FiPlus } from "react-icons/fi";
+import { handlePlay } from "@/utils/library/handlePlay";
 
 const Library: React.FC = () => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [showDownloader, setShowDownloader] = useState(false);
+  const [selectedBuildPath, setSelectedBuildPath] = useState("");
+
+  const handleDownloadComplete = () => {
+    setShowDownloader(false);
+    handlePlay(selectedBuildPath);
+  };
+
+  const handleShowDownloader = (buildPath: string) => {
+    setSelectedBuildPath(buildPath);
+    setShowDownloader(true);
+  };
 
   return (
     <>
+      {showDownloader && selectedBuildPath && (
+        <RequiredFilesDownloader
+          buildPath={selectedBuildPath}
+          onComplete={handleDownloadComplete}
+        />
+      )}
+
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -19,7 +40,7 @@ const Library: React.FC = () => {
         className="w-[calc(100vw-64px)] ml-16 h-screen flex flex-col px-7 pt-5 justify-start items-start"
       >
         <AnimatePresence mode="wait">
-          <BuildsGrid key="grid" />
+          <BuildsGrid key="grid" onShowDownloader={handleShowDownloader} />
         </AnimatePresence>
       </motion.div>
 

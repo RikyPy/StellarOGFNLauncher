@@ -39,7 +39,15 @@ export const handleClose = async (selectedPath: string) => {
   }
 
   try {
-    build.open = false;
+    BuildStore.setState((state) => {
+      const builds = new Map(state.builds);
+      const b = builds.get(selectedPath);
+      if (b) {
+        builds.set(selectedPath, { ...b, loading: false, open: false });
+      }
+      return { builds };
+    });
+
   } catch (error) {
     console.error(`error launching ${build.version}:`, error);
     sendNotification({

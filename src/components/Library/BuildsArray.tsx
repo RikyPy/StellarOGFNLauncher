@@ -5,7 +5,9 @@ import BuildCard from "./BuildCard";
 import { handlePlay } from "@/utils/library/handlePlay";
 import { handleClose } from "@/utils/library/handleClose";
 
-const BuildsArray: React.FC = () => {
+const BuildsArray: React.FC<{
+  onShowDownloader?: (buildPath: string) => void;
+}> = ({ onShowDownloader }) => {
   const { builds, remove } = BuildStore();
   const buildsArray = Array.from(builds.entries());
 
@@ -40,7 +42,7 @@ const BuildsArray: React.FC = () => {
             path={path}
             build={build}
             onDelete={handleDelete}
-            onPlay={() => handlePlay(path)}
+            onPlay={() => handlePlay(path, onShowDownloader)}
             onClose={() => handleClose(path)}
           />
         ))}

@@ -1,4 +1,3 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_log::log;
 
@@ -37,7 +36,9 @@ pub fn run() {
                 commands::builds::check_file_exists_and_size,
                 commands::builds::check_file_exists,
                 commands::builds::launch,
-                commands::builds::exit_all
+                commands::builds::exit_all,
+                commands::download::download_file_command,
+                commands::download::get_file_size
             ]
         )
         .run(tauri::generate_context!())

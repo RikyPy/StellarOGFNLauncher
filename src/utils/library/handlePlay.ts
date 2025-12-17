@@ -8,7 +8,43 @@ import { invoke } from "@tauri-apps/api/core";
 import { join } from "@tauri-apps/api/path";
 import { sendNotification } from "@tauri-apps/plugin-notification";
 
-export const handlePlay = async (selectedPath: string) => {
+const Files = [
+  "pakchunkStellar-WindowsClient.pak",
+  "pakchunkStellar-WindowsClient.sig",
+];
+
+const checkFiles = async (buildPath: string): Promise<boolean> => {
+  try {
+    const paksDir = await join(buildPath, "FortniteGame", "Content", "Paks");
+
+    for (const fileName of Files) {
+      const filePath = await join(paksDir, fileName);
+
+      try {
+        const exists = (await invoke("check_file_exists", {
+          path: filePath,
+        })) as boolean;
+
+        if (!exists) {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const handlePlay = async (
+  selectedPath: string,
+  onShowDownloader?: (buildPath: string) => void
+) => {
+  await invoke("exit_all", {});
+
   const authState = useAuthStore.getState();
   const buildstate = BuildStore.getState();
   const { addToast } = useToastStore.getState();
@@ -18,6 +54,16 @@ export const handlePlay = async (selectedPath: string) => {
 
   if (!access_token) {
     addToast("You are not authenticated!", "error");
+    return false;
+  }
+
+  const hasRequiredFiles = await checkFiles(selectedPath);
+  if (!hasRequiredFiles) {
+    if (onShowDownloader) {
+      onShowDownloader(selectedPath);
+      return false;
+    }
+    addToast("Missing required files. Please wait...", "error");
     return false;
   }
 
@@ -93,7 +139,7 @@ export const handlePlay = async (selectedPath: string) => {
 
     return result;
   } catch (error) {
-    console.error(`error launching ${build.version}:`, error);
+    console.error(`err launching ${build.version}:`, error);
     addToast(`Failed to launch ${build.version}!`, "error");
 
     BuildStore.setState((state) => {
