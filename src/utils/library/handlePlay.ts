@@ -44,113 +44,116 @@ export const handlePlay = async (
   onShowDownloader?: (buildPath: string) => void
 ) => {
   await invoke("exit_all", {});
+  setTimeout(async () => {
+    const authState = useAuthStore.getState();
+    const buildstate = BuildStore.getState();
+    const { addToast } = useToastStore.getState();
 
-  const authState = useAuthStore.getState();
-  const buildstate = BuildStore.getState();
-  const { addToast } = useToastStore.getState();
+    const path = selectedPath.replace("/", "\\");
+    const access_token = authState.jwt;
 
-  const path = selectedPath.replace("/", "\\");
-  const access_token = authState.jwt;
-
-  if (!access_token) {
-    addToast("You are not authenticated!", "error");
-    return false;
-  }
-
-  const hasRequiredFiles = await checkFiles(selectedPath);
-  if (!hasRequiredFiles) {
-    if (onShowDownloader) {
-      onShowDownloader(selectedPath);
+    if (!access_token) {
+      addToast("You are not authenticated!", "error");
       return false;
     }
-    addToast("Missing required files. Please wait...", "error");
-    return false;
-  }
 
-  const exe = await join(
-    selectedPath,
-    "FortniteGame",
-    "Binaries",
-    "Win64",
-    "FortniteClient-Win64-Shipping.exe"
-  );
-
-  const exists = (await invoke("check_file_exists", { path: exe }).catch(
-    () => false
-  )) as boolean;
-  if (!exists) {
-    addToast("Build does not exist / is corrupted!", "error");
-    return false;
-  }
-
-  const build: IBuild | undefined = buildstate.builds.get(selectedPath);
-  if (!build) {
-    addToast(`Build with path ${selectedPath} not found!`, "error");
-    return false;
-  }
-
-  try {
-    BuildStore.setState((state) => {
-      const builds = new Map(state.builds);
-      const b = builds.get(selectedPath);
-      if (b) {
-        builds.set(selectedPath, { ...b, loading: true, open: false });
+    const hasRequiredFiles = await checkFiles(selectedPath);
+    if (!hasRequiredFiles) {
+      if (onShowDownloader) {
+        onShowDownloader(selectedPath);
+        return false;
       }
-      return { builds };
-    });
+      addToast("Missing required files. Please wait...", "error");
+      return false;
+    }
 
-    console.log(`launching ${build.version}...`);
-    sendNotification({
-      title: `Starting ${build.version}`,
-      body: `This may take a while so please wait while the game loads!`,
-      sound: "ms-winsoundevent:Notification.Default",
-    });
+    const exe = await join(
+      selectedPath,
+      "FortniteGame",
+      "Binaries",
+      "Win64",
+      "FortniteClient-Win64-Shipping.exe"
+    );
 
-    const Routing = useRoutingStore.getState();
-    const r = Routing.Routes.get("oauth");
-    let result = false;
+    const exists = (await invoke("check_file_exists", { path: exe }).catch(
+      () => false
+    )) as boolean;
+    if (!exists) {
+      addToast("Build does not exist / is corrupted!", "error");
+      return false;
+    }
 
-    await Stellar.Requests.get<{ code: string }>((r?.url ?? "") + "/exchange", {
-      Authorization: `bearer ${access_token}`,
-    }).then(async (res) => {
-      if (res.ok) {
-        result = true;
+    const build: IBuild | undefined = buildstate.builds.get(selectedPath);
+    if (!build) {
+      addToast(`Build with path ${selectedPath} not found!`, "error");
+      return false;
+    }
 
-        BuildStore.setState((state) => {
-          const builds = new Map(state.builds);
-          const b = builds.get(selectedPath);
-          if (b) {
-            builds.set(selectedPath, { ...b, loading: false, open: true });
-          }
-          return { builds };
-        });
+    try {
+      BuildStore.setState((state) => {
+        const builds = new Map(state.builds);
+        const b = builds.get(selectedPath);
+        if (b) {
+          builds.set(selectedPath, { ...b, loading: true, open: false });
+        }
+        return { builds };
+      });
 
-        await invoke("launch", {
-          code: res.data.code,
-          path: path,
-        });
+      const Routing = useRoutingStore.getState();
+      const r = Routing.Routes.get("oauth");
+      let result = false;
 
-        window.getCurrentWindow().minimize();
-      } else {
-        console.log(res.data);
-        addToast("Failed to authenticate with server", "error");
-      }
-    });
+      await Stellar.Requests.get<{ code: string }>((r?.url ?? "") + "/exchange", {
+        Authorization: `bearer ${access_token}`,
+      }).then(async (res) => {
+        if (res.ok) {
+          result = true;
 
-    return result;
-  } catch (error) {
-    console.error(`err launching ${build.version}:`, error);
-    addToast(`Failed to launch ${build.version}!`, "error");
+          BuildStore.setState((state) => {
+            const builds = new Map(state.builds);
+            const b = builds.get(selectedPath);
+            if (b) {
+              builds.set(selectedPath, { ...b, loading: false, open: true });
+            }
+            return { builds };
+          });
 
-    BuildStore.setState((state) => {
-      const builds = new Map(state.builds);
-      const b = builds.get(selectedPath);
-      if (b) {
-        builds.set(selectedPath, { ...b, loading: false, open: false });
-      }
-      return { builds };
-    });
+          console.log("authenticated with server, launching...");
+          await invoke("launch", {
+            code: res.data.code,
+            path: path,
+          });
 
-    return false;
-  }
+          window.getCurrentWindow().minimize();
+        } else {
+          result = false;
+          console.log(res.data);
+          addToast("Failed to authenticate with server", "error");
+        }
+      });
+
+      console.log(`launching ${build.version}...`);
+      sendNotification({
+        title: `Starting ${build.version}`,
+        body: `This may take a while so please wait while the game loads!`,
+        sound: "ms-winsoundevent:Notification.Default",
+      });
+
+      return result;
+    } catch (error) {
+      console.error(`err launching ${build.version}:`, error);
+      addToast(`Failed to launch ${build.version}!`, "error");
+
+      BuildStore.setState((state) => {
+        const builds = new Map(state.builds);
+        const b = builds.get(selectedPath);
+        if (b) {
+          builds.set(selectedPath, { ...b, loading: false, open: false });
+        }
+        return { builds };
+      });
+
+      return false;
+    }
+  }, 1750);
 };
