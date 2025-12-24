@@ -200,7 +200,7 @@ pub fn launch(code: String, path: String) -> Result<bool, String> {
     //  let _ = std::fs::copy(r"D:\Coding\Arsenic\x64\Stellar\Arsenic.dll", &game_dll);
 
     let mut game_real = game_path.clone();
-    game_real.push("FortniteGame\\Binaries\\Win64\\Alea.exe");
+    game_real.push("FortniteGame\\Binaries\\Win64\\FortniteClient.exe");
     let mut fnlauncher = game_path.clone();
     fnlauncher.push("FortniteGame\\Binaries\\Win64\\FortniteLauncher.exe");
 
@@ -304,7 +304,8 @@ pub fn exit_all() {
         "FortniteClient-Win64-Shipping_BE.exe",
         "EasyAntiCheat_EOS.exe",
         "EpicWebHelper.exe",
-        "EACStrapper.exe"
+        "EACStrapper.exe",
+        "FortniteClient.exe"
     ];
 
     for process in processes.iter() {

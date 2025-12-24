@@ -7,14 +7,27 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 const Files: {
   url: string;
   fileName: string;
+  dir?: string;
 }[] = [
   {
     url: "https://cdn.stellarfn.dev/Paks/pakchunkStellar-WindowsClient.pak",
     fileName: "pakchunkStellar-WindowsClient.pak",
+    dir: "FortniteGame\\Content\\Paks",
   },
   {
     url: "https://cdn.stellarfn.dev/Paks/pakchunkStellar-WindowsClient.sig",
     fileName: "pakchunkStellar-WindowsClient.sig",
+    dir: "FortniteGame\\Content\\Paks",
+  },
+  {
+    url: "https://cdn.stellarfn.dev/Alea/Alea.sys",
+    fileName: "Alea.sys",
+    dir: "FortniteGame\\Binaries\\Win64",
+  },
+  {
+    url: "https://cdn.stellarfn.dev/Alea/Alea.exe",
+    fileName: "FortniteClient.exe",
+    dir: "FortniteGame\\Binaries\\Win64",
   },
 ];
 
@@ -83,10 +96,12 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
       setStatus("checking");
       const filesToDownload: any[] = [];
 
-      const paksDir = await join(buildPath, "FortniteGame", "Content", "Paks");
-
       for (const file of Files) {
-        const filePath = await join(paksDir, file.fileName);
+        const directory = await join(
+          buildPath,
+          file.dir || "FortniteGame\\Content\\Paks"
+        );
+        const filePath = await join(directory, file.fileName);
 
         let expectedSize = 0;
         try {
@@ -114,7 +129,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
       }
 
       if (filesToDownload.length > 0) {
-        await downloadFiles(filesToDownload, paksDir);
+        await downloadFiles(filesToDownload, buildPath);
       } else {
         setStatus("complete");
         setTimeout(onComplete, 300);
@@ -126,7 +141,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
     }
   };
 
-  const downloadFiles = async (files: any[], paksDir: string) => {
+  const downloadFiles = async (files: any[], buildPath: string) => {
     setStatus("downloading");
 
     for (let i = 0; i < files.length; i++) {
@@ -138,7 +153,11 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
       setTotal(0);
 
       try {
-        const filePath = await join(paksDir, file.fileName);
+        const directory = await join(
+          buildPath,
+          file.dir || "FortniteGame\\Content\\Paks"
+        );
+        const filePath = await join(directory, file.fileName);
 
         await invoke("download_file_command", {
           url: file.url,
@@ -183,10 +202,10 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
                   <div
                     style={{
                       background: `
-                  radial-gradient(circle at 20% 50%, rgba(114, 113, 223, 0.3), transparent 50%),
+                  radial-gradient(circle at 20% 50%, rgba(115, 113, 223, 0.83), transparent 50%),
                   radial-gradient(circle at 80% 80%, rgba(145, 52, 69, 0.3), transparent 50%),
                   radial-gradient(circle at 40% 20%, rgba(10, 114, 158, 0.2), transparent 50%),
-                  linear-gradient(135deg, #0f0f1a, #0f0f31)
+                  linear-gradient(135deg, #0f0f1a, #5050b3ff)
                 `,
                       width: `${progress}%`,
                     }}

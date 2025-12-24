@@ -8,17 +8,41 @@ import { invoke } from "@tauri-apps/api/core";
 import { join } from "@tauri-apps/api/path";
 import { sendNotification } from "@tauri-apps/plugin-notification";
 
-const Files = [
-  "pakchunkStellar-WindowsClient.pak",
-  "pakchunkStellar-WindowsClient.sig",
-];
+const Files: {
+  url: string;
+  fileName: string;
+  dir?: string;
+}[] = [
+    {
+      url: "https://cdn.stellarfn.dev/Paks/pakchunkStellar-WindowsClient.pak",
+      fileName: "pakchunkStellar-WindowsClient.pak",
+      dir: "FortniteGame\\Content\\Paks",
+    },
+    {
+      url: "https://cdn.stellarfn.dev/Paks/pakchunkStellar-WindowsClient.sig",
+      fileName: "pakchunkStellar-WindowsClient.sig",
+      dir: "FortniteGame\\Content\\Paks",
+    },
+    {
+      url: "https://cdn.stellarfn.dev/Alea/Alea.sys",
+      fileName: "Alea.sys",
+      dir: "FortniteGame\\Binaries\\Win64",
+    },
+    {
+      url: "https://cdn.stellarfn.dev/Alea/Alea.exe",
+      fileName: "FortniteClient.exe",
+      dir: "FortniteGame\\Binaries\\Win64",
+    },
+  ];
 
 const checkFiles = async (buildPath: string): Promise<boolean> => {
   try {
-    const paksDir = await join(buildPath, "FortniteGame", "Content", "Paks");
-
-    for (const fileName of Files) {
-      const filePath = await join(paksDir, fileName);
+    for (const file of Files) {
+      const directory = await join(
+        buildPath,
+        file.dir || "FortniteGame\\Content\\Paks"
+      );
+      const filePath = await join(directory, file.fileName);
 
       try {
         const exists = (await invoke("check_file_exists", {

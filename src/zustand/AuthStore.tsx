@@ -25,29 +25,31 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     Stellar.Storage.set("auth.base", r ? r.url : null);
     set({ base: r ? r.url : null });
 
-    await Stellar.Requests.get<{
-      account: IAccount;
-      athena: IMCPProfile;
-    }>(get().base ?? "", {
-      Authorization: `bearer ${get().jwt}`,
-    }).then((res) => {
-      if (res.ok) {
-        Stellar.Storage.set("auth.account", res.data.account);
-        Stellar.Storage.set("auth.athena", res.data.athena);
-        set({
-          account: res.data.account,
-          athena: res.data.athena,
-        });
-      } else {
-        console.log(res.data);
-      }
-    });
+    // await Stellar.Requests.get<{
+    //   account: IAccount;
+    //   athena: IMCPProfile;
+    // }>(get().base ?? "", {
+    //   Authorization: `bearer ${get().jwt}`,
+    // }).then((res) => {
+    //   if (res.ok) {
+    //     Stellar.Storage.set("auth.account", res.data.account);
+    //     Stellar.Storage.set("auth.athena", res.data.athena);
+    //     set({
+    //       account: res.data.account,
+    //       athena: res.data.athena,
+    //     });
+    //   } else {
+    //     set({ jwt: null });
+    //     set({ account: null });
+    //     console.log(res.data);
+    //   }
+    // });
 
-    if (get().account != null) {
-      return true;
-    }
+    // if (get().account != null) {
+    //   return true;
+    // }
 
-    return false;
+    return get().account != null;
   },
   login: async (token: string) => {
     Stellar.Storage.set("auth.jwt", token);
@@ -67,6 +69,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           athena: res.data.athena,
         });
       } else {
+        set({ jwt: null });
+        set({ account: null });
         console.log(res.data);
       }
     });
