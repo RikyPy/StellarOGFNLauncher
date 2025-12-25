@@ -44,9 +44,21 @@ const checkFiles = async (buildPath: string): Promise<boolean> => {
       );
       const filePath = await join(directory, file.fileName);
 
+      let expectedSize = 0;
       try {
-        const exists = (await invoke("check_file_exists", {
+        expectedSize = (await invoke("get_file_size", {
+          url: file.url,
+        })) as number;
+      } catch (e) {
+        console.error("error getting file size for", file.url, e);
+        expectedSize = 0;
+      }
+
+      try {
+        console.log("checking file:", filePath, "size:", expectedSize);
+        const exists = (await invoke("check_file_exists_and_size", {
           path: filePath,
+          size: expectedSize > 0 ? expectedSize : null,
         })) as boolean;
 
         if (!exists) {
@@ -67,7 +79,6 @@ export const handlePlay = async (
   selectedPath: string,
   onShowDownloader?: (buildPath: string) => void
 ) => {
-  await invoke("exit_all", {});
   setTimeout(async () => {
     const authState = useAuthStore.getState();
     const buildstate = BuildStore.getState();

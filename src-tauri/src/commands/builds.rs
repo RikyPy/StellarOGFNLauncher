@@ -291,12 +291,18 @@ pub fn launch(code: String, path: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn exit_all() {
-    let mut system = System::new_all();
+pub fn exit_all() -> Result<(), String> {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::Shell::ShellExecuteW;
+    use windows::Win32::UI::WindowsAndMessaging::SW_HIDE;
+    use windows::core::{ PCWSTR, w };
 
-    system.refresh_all();
+    fn to_utf16_z(s: &str) -> Vec<u16> {
+        use std::os::windows::ffi::OsStrExt;
+        std::ffi::OsStr::new(s).encode_wide().chain(std::iter::once(0)).collect()
+    }
 
-    let processes = vec![
+    let processes = [
         "EpicGamesLauncher.exe",
         "FortniteLauncher.exe",
         "FortniteClient-Win64-Shipping_EAC.exe",
@@ -304,21 +310,43 @@ pub fn exit_all() {
         "FortniteClient-Win64-Shipping_BE.exe",
         "EasyAntiCheat_EOS.exe",
         "EpicWebHelper.exe",
-        "EACStrapper.exe",
-        "FortniteClient.exe"
+        "FortniteClient.exe",
     ];
 
-    for process in processes.iter() {
-        let mut cmd = std::process::Command::new("taskkill");
+    let ps_script = format!(
+        "$procs=@({}); foreach($p in $procs){{ \
+            try {{ cmd /c \"taskkill /F /T /IM $p\" 2>$null | Out-Null }} catch {{}} \
+        }}",
+        processes
+            .iter()
+            .map(|p| format!("'{}'", p.replace('\'', "''")))
+            .collect::<Vec<_>>()
+            .join(",")
+    );
 
-        cmd.arg("/F");
+    let exe_w = to_utf16_z("powershell.exe");
+    let params_w = to_utf16_z(
+        &format!(
+            "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"{}\"",
+            ps_script.replace('"', "`\"")
+        )
+    );
 
-        cmd.arg("/IM");
+    let result = unsafe {
+        ShellExecuteW(
+            HWND(std::ptr::null_mut()),
+            w!("runas"),
+            PCWSTR(exe_w.as_ptr()),
+            PCWSTR(params_w.as_ptr()),
+            PCWSTR(std::ptr::null()),
+            SW_HIDE
+        )
+    };
 
-        cmd.arg(process);
-
-        cmd.creation_flags(CREATE_NO_WINDOW);
-
-        cmd.spawn().unwrap();
+    let code = result.0 as isize;
+    if code <= 32 {
+        return Err(format!("ShellExecuteW failed: {}", code));
     }
+
+    Ok(())
 }
