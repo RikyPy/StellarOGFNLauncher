@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GoHomeFill } from "react-icons/go";
-import { LibraryBig } from "lucide-react";
+import { LibraryBig, Pencil, X } from "lucide-react";
 import { TbSettings, TbLogout } from "react-icons/tb";
 import { motion, easeOut, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/zustand/AuthStore";
@@ -11,7 +11,8 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const AuthStore = useAuthStore();
-
+ const [showEditDialog, setShowEditDialog] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +41,9 @@ const Sidebar: React.FC = () => {
   const iconClass =
     "w-4 h-4 max-w-full max-h-full text-gray-400 transition-all duration-300 group-hover:text-white";
 
+
   return (
+    <>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.6, ease: easeOut } }}
@@ -163,9 +166,20 @@ const Sidebar: React.FC = () => {
                           draggable={false}
                         />
                         <div className="flex flex-col">
-                          <h3 className="font-medium text-white text-sm">
-                            {AuthStore.account?.DisplayName}
-                          </h3>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="font-medium text-white text-sm">
+                              {AuthStore.account?.DisplayName}
+                            </h3>
+                            <button
+                              onClick={() => {
+                                setNewUsername(AuthStore.account?.DisplayName || "");
+                                setShowEditDialog(true);
+                              }}
+                              className="text-white/60 hover:text-white transition-colors"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -202,6 +216,50 @@ const Sidebar: React.FC = () => {
         </AnimatePresence>
       </div>
     </motion.div>
+
+    {showEditDialog && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="bg-neutral-900 border border-white/10 rounded-xl p-6 w-96 shadow-2xl"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-white">Edit Username</h2>
+            <button
+              onClick={() => setShowEditDialog(false)}
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <p className="text-white/60 text-sm mb-4">Enter your new username below.</p>
+          <input
+            type="text"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            className="w-full px-4 py-2 bg-neutral-800 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 mb-4"
+            placeholder="New username"
+          />
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => setShowEditDialog(false)}
+              className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              //onClick={}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Save Changes
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    )}
+    </>
   );
 };
 
