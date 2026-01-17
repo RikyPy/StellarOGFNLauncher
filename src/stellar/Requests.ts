@@ -1,4 +1,4 @@
-import { fetch } from "@tauri-apps/plugin-http";
+import axios, { AxiosRequestConfig } from "axios";
 
 export class Requests {
     private static async request<T>(
@@ -7,24 +7,32 @@ export class Requests {
         body?: any,
         headers: Record<string, string> = {}
     ): Promise<{ status: number; ok: boolean; data: T }> {
-        let Headers: Record<string, string> = { ...headers };
-        if (body !== undefined) {
-            Headers["Content-Type"] = "application/json";
-        }
-
-        const response = await fetch(url, {
+        const config: AxiosRequestConfig = {
             method,
-            headers: Headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-
-        const data = (await response.json()) as T;
-
-        return {
-            status: response.status,
-            ok: response.ok,
-            data,
+            url,
+            headers,
+            data: body,
         };
+
+        console.log(`req: ${method} ${url}`, body ? body : "");
+
+        try {
+            const response = await axios(config);
+            return {
+                status: response.status,
+                ok: response.status >= 200 && response.status < 300,
+                data: response.data as T,
+            };
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return {
+                    status: error.response.status,
+                    ok: false,
+                    data: error.response.data as T,
+                };
+            }
+            throw error;
+        }
     }
 
     static get<T = any>(url: string, headers: Record<string, string> = {}) {

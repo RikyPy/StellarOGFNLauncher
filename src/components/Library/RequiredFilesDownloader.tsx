@@ -21,14 +21,14 @@ const Files: {
     dir: "FortniteGame\\Content\\Paks",
   },
   {
-    url: "https://cdn.alea.ac/stellar/Alea.sys",
-    fileName: "Alea.sys",
-    dir: "FortniteGame\\Binaries\\Win64",
+    url: "https://cloud.arc-services.dev/modules/anticheat/Arc.exe",
+    fileName: "Arc.exe",
+    dir: "Arc",
   },
   {
-    url: "https://cdn.alea.ac/stellar/Alea.exe",
-    fileName: "FortniteClient.exe",
-    dir: "FortniteGame\\Binaries\\Win64",
+    url: "https://cdn.stellarfn.dev/Arc/Config.json",
+    fileName: "Config.json",
+    dir: "Arc",
   },
 ];
 
@@ -54,8 +54,9 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
   const [downloaded, setDownloaded] = useState(0);
   const [total, setTotal] = useState(0);
   const [status, setStatus] = useState<"checking" | "downloading" | "complete">(
-    "checking"
+    "checking",
   );
+  const [amountOfFiles, setAmountOfFiles] = useState(Files.length);
 
   useEffect(() => {
     const setupListener = async () => {
@@ -66,7 +67,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
           setDownloaded(event.payload.downloaded);
           setTotal(event.payload.total);
           setCurrentFile(event.payload.file_name);
-        }
+        },
       );
 
       return unlisten;
@@ -108,14 +109,14 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
             url: "https://cdn.stellarfn.dev/Paks/pakchunkBubbleWrap-WindowsClient_P.sig",
             fileName: "pakchunkStellarBubble-WindowsClient.sig",
             dir: "FortniteGame\\Content\\Paks",
-          }
+          },
         );
       }
 
       for (const file of Files) {
         const directory = await join(
           buildPath,
-          file.dir || "FortniteGame\\Content\\Paks"
+          file.dir || "FortniteGame\\Content\\Paks",
         );
         const filePath = await join(directory, file.fileName);
 
@@ -146,6 +147,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
 
       if (filesToDownload.length > 0) {
         await downloadFiles(filesToDownload, buildPath);
+        setAmountOfFiles(filesToDownload.length);
       } else {
         setStatus("complete");
         setTimeout(onComplete, 300);
@@ -171,7 +173,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
       try {
         const directory = await join(
           buildPath,
-          file.dir || "FortniteGame\\Content\\Paks"
+          file.dir || "FortniteGame\\Content\\Paks",
         );
         const filePath = await join(directory, file.fileName);
 
@@ -203,7 +205,7 @@ const RequiredFilesDownloader: React.FC<RequiredFilesDownloaderProps> = ({
             <p className="text-white/60 text-sm">
               {status === "checking"
                 ? "Please wait while we verify the required files exist..."
-                : `File ${currentFileIndex + 1} of ${Files.length}`}
+                : `File ${currentFileIndex + 1} of ${amountOfFiles}`}
             </p>
           </div>
 

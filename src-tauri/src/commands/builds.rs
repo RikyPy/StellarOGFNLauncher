@@ -133,7 +133,12 @@ pub fn run_elevated(exe: &str, params: &str, working_dir: Option<&str>) -> Resul
 }
 
 #[tauri::command]
-pub fn launch(code: String, path: String, extra_args: Vec<String>) -> Result<bool, String> {
+pub fn launch(
+    code: String,
+    path: String,
+    extra_args: Vec<String>,
+    identity: String
+) -> Result<bool, String> {
     use std::{ fs, path::PathBuf, process::Stdio };
 
     let game_path = PathBuf::from(path);
@@ -176,7 +181,7 @@ pub fn launch(code: String, path: String, extra_args: Vec<String>) -> Result<boo
     }
 
     let mut game_real = game_path.clone();
-    game_real.push("FortniteGame\\Binaries\\Win64\\FortniteClient.exe");
+    game_real.push("Arc\\Arc.exe");
     let mut fnlauncher = game_path.clone();
     fnlauncher.push("FortniteGame\\Binaries\\Win64\\FortniteLauncher.exe");
 
@@ -184,6 +189,7 @@ pub fn launch(code: String, path: String, extra_args: Vec<String>) -> Result<boo
     fnac.push("FortniteGame\\Binaries\\Win64\\FortniteClient-Win64-Shipping_BE.exe");
 
     let exchange_arg = &format!("-AUTH_PASSWORD={}", code);
+    let arc_identity = &format!("-t={}", identity);
 
     let mut fort_args = vec![
         "-epicapp=Fortnite",
@@ -199,7 +205,8 @@ pub fn launch(code: String, path: String, extra_args: Vec<String>) -> Result<boo
         "-skippatchcheck",
         "-AUTH_LOGIN=",
         exchange_arg,
-        "-AUTH_TYPE=exchangecode"
+        "-AUTH_TYPE=exchangecode",
+        arc_identity
     ];
 
     for arg in extra_args.iter() {
@@ -225,14 +232,13 @@ pub fn launch(code: String, path: String, extra_args: Vec<String>) -> Result<boo
         //     run_elevated(reg_exe, params, None)?;
         // }
 
-        const CREATE_NO_WINDOW: u32 = 0x08000000;
-        const CREATE_SUSPENDED: u32 = 0x00000004;
-
-        let exe_str = game_real.to_str().ok_or("Invalid executable path")?;
-        let params = fort_args.join(" ");
-        let work_dir = game_real.parent().and_then(|p| p.to_str());
-
-        run_elevated(exe_str, &params, work_dir)?;
+        let _game = std::process::Command
+            ::new(game_real)
+            .creation_flags(CREATE_NO_WINDOW)
+            .args(&fort_args)
+            .stdout(Stdio::piped())
+            .spawn()
+            .map_err(|e| format!("Failed to start Stellar: {}", e))?;
 
         let _fnlauncherfr = std::process::Command
             ::new(fnlauncher)
@@ -304,7 +310,7 @@ pub fn exit_all() -> Result<(), String> {
         "FortniteClient-Win64-Shipping_BE.exe",
         "EasyAntiCheat_EOS.exe",
         "EpicWebHelper.exe",
-        "FortniteClient.exe",
+        "Arc.exe",
         "EpicGamesLauncher.exe",
     ];
 

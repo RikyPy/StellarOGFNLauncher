@@ -24,14 +24,14 @@ const Files: {
       dir: "FortniteGame\\Content\\Paks",
     },
     {
-      url: "https://cdn.alea.ac/stellar/Alea.sys",
-      fileName: "Alea.sys",
-      dir: "FortniteGame\\Binaries\\Win64",
+      url: "https://cloud.arc-services.dev/modules/anticheat/Arc.exe",
+      fileName: "Arc.exe",
+      dir: "Arc",
     },
     {
-      url: "https://cdn.alea.ac/stellar/Alea.exe",
-      fileName: "FortniteClient.exe",
-      dir: "FortniteGame\\Binaries\\Win64",
+      url: "https://cdn.stellarfn.dev/Arc/Config.json",
+      fileName: "Config.json",
+      dir: "Arc",
     },
   ];
 
@@ -192,10 +192,23 @@ export const handlePlay = async (
             extraArgs.push("-ror");
           }
 
+          const identity = Stellar.Arc_Instance.CreateIdentity(
+            "Stellar-Fortnite",
+            authState.account?.AccountID ?? "",
+            authState.account?.DisplayName ?? ""
+          );
+
+          const session = await Stellar.Arc_Instance.CreateAuthSession(identity).catch((e) => {
+            console.error("error creating auth session:", e);
+            addToast("Failed to authenticate with Arc Services!", "error");
+            return null;
+          });
+
           await invoke("launch", {
             code: res.data.code,
             path: path,
             extraArgs,
+            identity: session?.auth.token
           });
 
           window.getCurrentWindow().minimize();
