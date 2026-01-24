@@ -149,41 +149,40 @@ const Leaderboards: React.FC = () => {
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative">
+      {userRank && userRank.rank > 0 && (
+        <GlassContainer className="absolute top-6 right-6 p-2 mt-4 border border-white/10 rounded-md w-48 h-auto z-20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {userRank.avatar && (
+                <img
+                  src={userRank.avatar}
+                  alt={userRank.username}
+                  className="w-8 h-8 rounded-md object-cover rounded-md"
+                />
+              )}
+              <div className="flex flex-col">
+                <p className="text-white text-sm font-medium">
+                  {userRank.username}
+                </p>
+                <p className="text-white/40 text-xs">
+                  Rank #{userRank.rank.toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white text-sm font-semibold">
+                {userRank.hype.toLocaleString()}
+              </p>
+              <p className="text-white/40 text-xs">Hype</p>
+            </div>
+          </div>
+        </GlassContainer>
+      )}
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full relative z-10">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">Leaderboards</h1>
           <p className="text-white/40 text-sm">Global hype rankings</p>
         </div>
-
-        {userRank && userRank.rank > 0 && (
-          <GlassContainer className="mb-6 p-3 border border-white/10 rounded-md">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {userRank.avatar && (
-                  <img
-                    src={userRank.avatar}
-                    alt={userRank.username}
-                    className="w-8 h-8 rounded-md object-cover"
-                  />
-                )}
-                <div className="flex flex-col">
-                  <p className="text-white text-sm font-medium">
-                    {userRank.username}
-                  </p>
-                  <p className="text-white/40 text-xs">
-                    Rank #{userRank.rank.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-white font-semibold">
-                  {userRank.hype.toLocaleString()}
-                </p>
-                <p className="text-white/40 text-xs">Hype</p>
-              </div>
-            </div>
-          </GlassContainer>
-        )}
 
         <GlassContainer className="flex-1 border border-white/10 rounded-md overflow-hidden w-full min-w-5xl mx-auto flex flex-col">
           {loading ? (
