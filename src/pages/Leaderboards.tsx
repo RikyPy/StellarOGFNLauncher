@@ -26,8 +26,6 @@ interface LeaderboardResponse {
   sortBy: string;
 }
 
-const LIMIT = 7;
-
 const Leaderboards: React.FC = () => {
   const auth = useAuthStore();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -41,7 +39,7 @@ const Leaderboards: React.FC = () => {
   const fetchLeaderboard = useCallback(async () => {
     if (!auth.jwt || !auth.base) return;
 
-    const leaderboardRoute = Routing.Routes.get("leaderboards");
+    const leaderboardRoute = Routing.Routes.get("leaderboards")?.url;
     if (!leaderboardRoute) {
       setError(true);
       setLoading(false);
@@ -57,6 +55,7 @@ const Leaderboards: React.FC = () => {
       );
 
       const res = req.data as LeaderboardResponse;
+      console.log(req.data);
       setEntries(res.entries || []);
       setTotalPages(res.pagination?.totalPages || 0);
     } catch (err) {
@@ -71,12 +70,9 @@ const Leaderboards: React.FC = () => {
   const fetchUserRank = useCallback(async () => {
     if (!auth.jwt || !auth.base || !auth.account?.AccountID) return;
 
-    const leaderboardRoute = Routing.Routes.get("leaderboards");
-    if (!leaderboardRoute) return;
-
     try {
       const req = await Stellar.Requests.get<LeaderboardEntry>(
-        `${leaderboardRoute}/stellar/launcher/v1/leaderboards/rank/${auth.account.AccountID}`,
+        `https://prod-api-v1.stellarfn.dev/stellar/launcher/v1/leaderboards/rank/${auth.account.AccountID}`,
         { Authorization: `Bearer ${auth.jwt}` },
       );
 
@@ -91,10 +87,6 @@ const Leaderboards: React.FC = () => {
     fetchLeaderboard();
     fetchUserRank();
   }, [fetchLeaderboard, fetchUserRank]);
-
-  const getStatValue = (entry: LeaderboardEntry) => {
-    return entry.wins.toLocaleString();
-  };
 
   const getMedalColor = (rank: number) => {
     switch (rank) {
@@ -115,7 +107,7 @@ const Leaderboards: React.FC = () => {
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full relative z-10">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-white mb-1">Leaderboards</h1>
-            <p className="text-white/40 text-sm">Global leaderboard rankings</p>
+            <p className="text-white/40 text-sm">Global hype rankings</p>
           </div>
 
           <GlassContainer className="flex-1 border border-white/10 rounded-md flex items-center justify-center">
@@ -160,7 +152,7 @@ const Leaderboards: React.FC = () => {
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full relative z-10">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">Leaderboards</h1>
-          <p className="text-white/40 text-sm">Global leaderboard rankings</p>
+          <p className="text-white/40 text-sm">Global hype rankings</p>
         </div>
 
         {userRank && userRank.rank > 0 && (
@@ -185,9 +177,9 @@ const Leaderboards: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-white font-semibold">
-                  {getStatValue(userRank)}
+                  {userRank.hype.toLocaleString()}
                 </p>
-                <p className="text-white/40 text-xs">Wins</p>
+                <p className="text-white/40 text-xs">Hype</p>
               </div>
             </div>
           </GlassContainer>
