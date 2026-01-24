@@ -49,11 +49,10 @@ const Leaderboards: React.FC = () => {
     try {
       setLoading(true);
       setError(false);
-
-      const url = `${leaderboardRoute}?page=${page}&limit=50`;
-      const req = await Stellar.Requests.get<LeaderboardResponse>(url, {
-        Authorization: `Bearer ${auth.jwt}`,
-      });
+      const req = await Stellar.Requests.get<LeaderboardResponse>(
+        `${leaderboardRoute.url}?page=${page}&limit=${LIMIT}`,
+        { Authorization: `Bearer ${auth.jwt}` },
+      );
 
       const res = req.data as LeaderboardResponse;
       console.log(req.data);
@@ -105,7 +104,7 @@ const Leaderboards: React.FC = () => {
   if (error) {
     return (
       <div className="w-full h-full p-6 flex flex-col relative">
-        <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full relative z-10">
+        <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full relative z-10">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-white mb-1">Leaderboards</h1>
             <p className="text-white/40 text-sm">Global hype rankings</p>
@@ -150,7 +149,7 @@ const Leaderboards: React.FC = () => {
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative">
-      <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full relative z-10">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full relative z-10">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">Leaderboards</h1>
           <p className="text-white/40 text-sm">Global hype rankings</p>
@@ -186,7 +185,7 @@ const Leaderboards: React.FC = () => {
           </GlassContainer>
         )}
 
-        <GlassContainer className="flex-1 border border-white/10 rounded-md overflow-hidden flex flex-col">
+        <GlassContainer className="flex-1 border border-white/10 rounded-md overflow-hidden w-full min-w-5xl mx-auto flex flex-col">
           {loading ? (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-white/40 text-sm">Loading...</p>
@@ -234,6 +233,28 @@ const Leaderboards: React.FC = () => {
                           </p>
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                          {/* <div className="text-center">
+                            <p
+                              className={`text-sm font-semibold ${isCurrentUser ? "text-white" : "text-white/60"}`}
+                            >
+                              {entry.wins.toLocaleString()}
+                            </p>
+                            <p className="text-[10px] text-white/40 mt-0.5">
+                              Wins
+                            </p>
+                          </div>
+                          <div className="w-px h-8 bg-white/10"></div>
+                          <div className="text-center">
+                            <p
+                              className={`text-sm font-semibold ${isCurrentUser ? "text-white" : "text-white/60"}`}
+                            >
+                              {entry.matchesPlayed.toLocaleString()}
+                            </p>
+                            <p className="text-[10px] text-white/40 mt-0.5">
+                              Matches
+                            </p>
+                          </div>
+                          <div className="w-px h-8 bg-white/10"></div> */}
                           <div className="text-center">
                             <p
                               className={`text-sm font-semibold ${isCurrentUser ? "text-white" : "text-white/60"}`}
