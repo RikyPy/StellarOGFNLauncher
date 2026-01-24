@@ -50,7 +50,7 @@ const Leaderboards: React.FC = () => {
       setLoading(true);
       setError(false);
       const req = await Stellar.Requests.get<LeaderboardResponse>(
-        `${leaderboardRoute}?page=${page}`,
+        `${leaderboardRoute}?page=${page}&limit=7`,
         { Authorization: `Bearer ${auth.jwt}` },
       );
 
