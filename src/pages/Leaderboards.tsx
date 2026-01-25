@@ -30,6 +30,8 @@ const Leaderboards: React.FC = () => {
   const auth = useAuthStore();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [page, setPage] = useState(1);
+  const [isEditingPage, setIsEditingPage] = useState(false);
+  const [pageInput, setPageInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [userRank, setUserRank] = useState<LeaderboardEntry | null>(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -66,6 +68,20 @@ const Leaderboards: React.FC = () => {
       setLoading(false);
     }
   }, [page, auth.jwt, auth.base, Routing.Routes]);
+
+  const confirmPageChange = () => {
+    const value = Number(pageInput);
+
+    if (!Number.isNaN(value)) {
+      const clamped = Math.min(
+        Math.max(1, value),
+        totalPages || 1,
+      );
+      setPage(clamped);
+    }
+
+    setIsEditingPage(false);
+  };
 
   const fetchUserRank = useCallback(async () => {
     if (!auth.jwt || !auth.base || !auth.account?.AccountID) return;
@@ -279,9 +295,42 @@ const Leaderboards: React.FC = () => {
                 >
                   <ChevronLeft size={16} className="text-white/60" />
                 </button>
-                <p className="text-xs text-white/40">
-                  Page {page} of {totalPages}
-                </p>
+                {isEditingPage ? (
+                  <div className="flex items-center gap-1 text-xs text-white/40">
+                    <span>Page</span>
+                    <input
+                      autoFocus
+                      type="number"
+                      min={1}
+                      max={totalPages}
+                      value={pageInput}
+                      onChange={(e) => setPageInput(e.target.value)}
+                      onBlur={confirmPageChange}
+                      onFocus={(e) => e.target.select()}
+                      onKeyDown={(e) => {
+                        if (
+                          ["e", "E", "+", "-", "."].includes(e.key)
+                        ) {
+                          e.preventDefault();
+                        }
+                        if (e.key === "Enter") confirmPageChange();
+                        if (e.key === "Escape") setIsEditingPage(false);
+                      }}
+                      className="w-12 bg-white/10 border border-white/20 rounded px-1 py-0.5 text-white text-xs text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <span>of {totalPages}</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setPageInput(String(page));
+                      setIsEditingPage(true);
+                    }}
+                    className="text-xs text-white/40 hover:text-white transition-colors"
+                  >
+                    Page {page} of {totalPages}
+                  </button>
+                )}
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
